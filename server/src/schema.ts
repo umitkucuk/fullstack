@@ -8,7 +8,7 @@ const typeDefs = `
   }
 
   type Query {
-    course(id: Int!): Course 
+    allCats: [Cat!]!
   }
 
   type Mutation {
