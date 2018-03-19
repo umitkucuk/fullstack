@@ -1,5 +1,6 @@
 import * as express from 'express'
 import * as bodyParser from 'body-parser'
+import * as cors from 'cors'
 import { graphqlExpress, graphiqlExpress  } from 'apollo-server-express'
 
 import db from './config/db.config'
@@ -17,7 +18,7 @@ db.connection.on('error', () => {
   throw new Error('Unable to connect to database')
 })
 
-app.use('/graphql', bodyParser.json(), graphqlExpress({ schema, context: { Cat } }))
+app.use('/graphql', bodyParser.json(), cors(), graphqlExpress({ schema, context: { Cat } }))
 
 app.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }))
 
