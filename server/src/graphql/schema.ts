@@ -2,17 +2,22 @@ import { makeExecutableSchema } from 'graphql-tools'
 import resolvers from './resolvers'
 
 const typeDefs = `
-  type Cat {
+  scalar Date
+
+  type User {
     _id: String!
-    name: String!
+    email: String!
+    password: String!
+    created_at: Date!
+    updated_at: Date!
   }
 
   type Query {
-    allCats: [Cat!]!
+    allUsers: [User!]!
   }
 
   type Mutation {
-    createCat(name: String!): Cat!
+    register(email: String!, password: String!): User
   }
 `
 
