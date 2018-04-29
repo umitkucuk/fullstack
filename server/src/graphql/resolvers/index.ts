@@ -2,10 +2,11 @@ import UserResolvers from './user-resolvers'
 
 export default {
   Query: {
-    allUsers: UserResolvers.allUsers
+    me: UserResolvers.me
   },
 
   Mutation: {
     register: UserResolvers.register,
+    login: UserResolvers.login
   }
 }
