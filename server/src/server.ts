@@ -4,6 +4,7 @@ import * as cors from 'cors'
 import * as session from 'express-session'
 import * as mongoose from 'mongoose'
 (<any>mongoose).Promise = require('bluebird')
+import * as mongoStoreFactory from 'connect-mongo'
 //import * as passport from 'passport'
 //import * as jwt from 'express-jwt'
 import { graphqlExpress, graphiqlExpress } from 'apollo-server-express'
@@ -28,17 +29,20 @@ app.use('*',
   })
 )
 
+const MongoStore = mongoStoreFactory(session)
+
 // Express Session
 app.use(
   session({
-    name: 'qid',
+    name: 'session',
+    store: new MongoStore({ url: config.MONGO_URI }),
     secret: config.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      maxAge: 1000 * 60 * 60 * 24 * 7 // 7 days
+      secure: true,
+      maxAge: 1800000
     }
   })
 )
