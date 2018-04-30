@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom'
 import { ApolloProvider } from 'react-apollo'
 import { ApolloClient, HttpLink, InMemoryCache } from 'apollo-boost'
 
-import App from './App'
+import App from './components/App'
 import registerServiceWorker from './registerServiceWorker'
 
 const httpLink = new HttpLink({

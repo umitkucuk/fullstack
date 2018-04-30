@@ -8,7 +8,7 @@ const QUERY = gql`
   }
 `
 
-class App extends Component {
+class AuthHello extends Component {
   render() {
     return (
       <Query query={QUERY}>
@@ -27,4 +27,4 @@ class App extends Component {
   }
 }
 
-export default App
+export default AuthHello
