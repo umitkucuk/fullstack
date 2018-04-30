@@ -9,10 +9,11 @@ const typeDefs = `
 
   type Query {
     me: User
+    authHello: String
   }
 
   type Mutation {
-    register (email: String!, password: String!): String
+    register (email: String!, password: String!): Boolean
     login (email: String!, password: String!): String
   }
 `

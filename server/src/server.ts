@@ -1,11 +1,11 @@
 import * as express from 'express'
 import * as bodyParser from 'body-parser'
 import * as cors from 'cors'
-//import * as session from 'express-session'
+import * as session from 'express-session'
 import * as mongoose from 'mongoose'
 (<any>mongoose).Promise = require('bluebird')
 //import * as passport from 'passport'
-import * as jwt from 'express-jwt'
+//import * as jwt from 'express-jwt'
 import { graphqlExpress, graphiqlExpress } from 'apollo-server-express'
 
 import config from './config/app.config'
@@ -28,7 +28,7 @@ app.use('*',
   })
 )
 
-/* Express Session
+// Express Session
 app.use(
   session({
     name: 'qid',
@@ -41,23 +41,21 @@ app.use(
       maxAge: 1000 * 60 * 60 * 24 * 7 // 7 days
     }
   })
-)*/
+)
 
 /* Passport
 app.use(passport.initialize())
 app.use(passport.session())
 */
 
-const auth = jwt({
-  secret: config.JWT_SECRET,
-  credentialsRequired: false
-})
-
 app.use(
   '/graphql',
   bodyParser.json(),
-  auth,
-  graphqlExpress(req => ({ schema, context: { user: req.user } }))
+  (req: any, _, next) => {
+    console.log(req.session)
+    return next()
+  },
+  graphqlExpress(req => ({ schema, context: { req } }))
 )
 
 app.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }))
