@@ -14,7 +14,7 @@ const typeDefs = `
 
   type Mutation {
     register (email: String!, password: String!): Boolean
-    login (email: String!, password: String!): String
+    login (email: String!, password: String!): Boolean
   }
 `
 

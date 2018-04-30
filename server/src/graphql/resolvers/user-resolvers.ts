@@ -13,6 +13,24 @@ export default {
     return true
   },
 
+  login: async (_, args, { req }) => {
+    const user = await User.findOne({ 'email': args.email })
+
+    if (!user) {
+      throw new Error('Incorrect email or password')
+    }
+
+    const valid = await user.validatePassword(args.password)
+
+    if (!valid) {
+      throw new Error('Incorrect email or password')
+    }
+
+    req.session.userId = user._id
+
+    return true
+  },
+
   /*login: async (_, { email, password }, req) => {
     const user = await User.findOne({ 'email': email })
 
@@ -40,12 +58,4 @@ export default {
       return 'Could not find cookie :('
     }
   },
-
-  me: async (_, args, { user }) => {
-    if (!user) {
-      throw new Error('You are not authenticated!')
-    }
-
-    return await User.findById(user._id)
-  }
 }
