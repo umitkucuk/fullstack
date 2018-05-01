@@ -7,9 +7,9 @@ import * as mongoose from 'mongoose'
 import * as mongoSessionStore from 'connect-mongo'
 import * as passport from 'passport'
 import { graphqlExpress, graphiqlExpress } from 'apollo-server-express'
+import * as errorhandler from 'errorhandler'
 
 import config from './config/app.config'
-import User from './models/user'
 import schema from './graphql/schema'
 
 const PORT = config.PORT || 8000
@@ -19,6 +19,11 @@ const app = express()
 mongoose.connect(config.MONGO_URI)
   .then(() => console.log('Connection succesful to DB!'))
   .catch((err) => console.log(err))
+
+// Error Handler
+if (config.NODE_ENV === 'development') {
+  app.use(errorhandler())
+}
 
 // Cors Middleware
 app.use('*',
