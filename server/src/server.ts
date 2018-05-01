@@ -19,7 +19,7 @@ const app = express()
 
 mongoose.connect(config.MONGO_URI)
   .then(() => console.log('Connection succesful to DB!'))
-  .catch((err) => console.log('err'))
+  .catch((err) => console.log(err))
 
 // Cors Middleware
 app.use('*',
