@@ -31,26 +31,6 @@ export default {
     return true
   },
 
-  /*login: async (_, { email, password }, req) => {
-    const user = await User.findOne({ 'email': email })
-
-    if (!user) {
-      throw new Error('Incorrect email or password')
-    }
-
-    const valid = await user.comparePassword(password)
-
-    if (!valid) {
-      throw new Error('Incorrect email or password')
-    }
-
-    return jwt.sign(
-      { id: user._id, email: user.email },
-      config.JWT_SECRET,
-      { expiresIn: '1d' }
-    )
-  },*/
-
   authHello: async (_, __, { req }) => {
     if (req.session.userId) {
       return `Cookie found! Your id is: ${req.session.userId}`

@@ -4,9 +4,8 @@ import * as cors from 'cors'
 import * as session from 'express-session'
 import * as mongoose from 'mongoose'
 (<any>mongoose).Promise = require('bluebird')
-import * as mongoStoreFactory from 'connect-mongo'
-//import * as passport from 'passport'
-//import * as jwt from 'express-jwt'
+import * as mongoSessionStore from 'connect-mongo'
+import * as passport from 'passport'
 import { graphqlExpress, graphiqlExpress } from 'apollo-server-express'
 
 import config from './config/app.config'
@@ -29,36 +28,33 @@ app.use('*',
   })
 )
 
-const MongoStore = mongoStoreFactory(session)
+const MongoStore = mongoSessionStore(session)
 
-// Express Session
 app.use(
   session({
-    name: 'session',
-    store: new MongoStore({ url: config.MONGO_URI }),
+    name: 'sid',
     secret: config.SESSION_SECRET,
+    store: new MongoStore({ 
+      mongooseConnection: mongoose.connection,
+      ttl: 14 * 24 * 60 * 60 // 14 days
+    }),
     resave: false,
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      secure: true,
-      maxAge: 1800000
+      //secure: true,
+      maxAge: 14 * 24 * 60 * 60 * 1000 // 14 days
     }
   })
 )
 
-/* Passport
+// Passport
 app.use(passport.initialize())
 app.use(passport.session())
-*/
 
 app.use(
   '/graphql',
   bodyParser.json(),
-  (req: any, _, next) => {
-    console.log(req.session)
-    return next()
-  },
   graphqlExpress(req => ({ schema, context: { req } }))
 )
 
