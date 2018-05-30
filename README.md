@@ -8,7 +8,7 @@ Fullstack Playground
 
 ## Table of Contents
 - [Requirements](#requirements)
-- [Installation for server](#Installation-for-server)
+- [Installation for server](#installation-for-server)
 - [License](#license)
 
 ## Requirements
@@ -18,9 +18,10 @@ Fullstack Playground
 ## Directory Layout
 ```bash
 .
-├── /src/
+├── /server/
 │   ├── /src/
-│   │   │   ├── /app.config.ts
+│   │   │   ├── /config
+│   │   │   │   ├── /app.config.ts
 │   │   ├── /graphql/
 │   │   │   ├── /resolvers/
 │   │   │   │   ├── /index.ts
