@@ -20,10 +20,7 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-
 }, { timestamps: true })
-
-
 
 function hashPassword(password: string): string {
   if (!password) return null

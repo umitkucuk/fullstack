@@ -38,7 +38,7 @@ const MongoStore = mongoSessionStore(session)
 app.use(
   session({
     name: 'sid',
-    secret: config.SESSION_SECRET,
+    secret: config.NODE_ENV === 'production' ? config.SESSION_SECRET : 'secret',
     store: new MongoStore({ 
       mongooseConnection: mongoose.connection,
       ttl: 14 * 24 * 60 * 60 // 14 days
