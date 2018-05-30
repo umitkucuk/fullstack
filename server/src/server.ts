@@ -1,15 +1,15 @@
 import * as express from 'express'
 import * as bodyParser from 'body-parser'
 import * as cors from 'cors'
-//import * as session from 'express-session'
+import * as session from 'express-session'
 import * as mongoose from 'mongoose'
 (<any>mongoose).Promise = require('bluebird')
-//import * as passport from 'passport'
-import * as jwt from 'express-jwt'
+import * as mongoSessionStore from 'connect-mongo'
+import * as passport from 'passport'
 import { graphqlExpress, graphiqlExpress } from 'apollo-server-express'
+import * as errorhandler from 'errorhandler'
 
 import config from './config/app.config'
-import User from './models/user'
 import schema from './graphql/schema'
 
 const PORT = config.PORT || 8000
@@ -18,7 +18,12 @@ const app = express()
 
 mongoose.connect(config.MONGO_URI)
   .then(() => console.log('Connection succesful to DB!'))
-  .catch((err) => console.log('err'))
+  .catch((err) => console.log(err))
+
+// Error Handler
+if (config.NODE_ENV === 'development') {
+  app.use(errorhandler())
+}
 
 // Cors Middleware
 app.use('*',
@@ -28,36 +33,34 @@ app.use('*',
   })
 )
 
-/* Express Session
+const MongoStore = mongoSessionStore(session)
+
 app.use(
   session({
-    name: 'qid',
-    secret: config.SESSION_SECRET,
+    name: 'sid',
+    secret: config.NODE_ENV === 'production' ? config.SESSION_SECRET : 'secret',
+    store: new MongoStore({ 
+      mongooseConnection: mongoose.connection,
+      ttl: 14 * 24 * 60 * 60 // 14 days
+    }),
     resave: false,
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      maxAge: 1000 * 60 * 60 * 24 * 7 // 7 days
+      //secure: true,
+      maxAge: 14 * 24 * 60 * 60 * 1000 // 14 days
     }
   })
-)*/
+)
 
-/* Passport
+// Passport
 app.use(passport.initialize())
 app.use(passport.session())
-*/
-
-const auth = jwt({
-  secret: config.JWT_SECRET,
-  credentialsRequired: false
-})
 
 app.use(
   '/graphql',
   bodyParser.json(),
-  auth,
-  graphqlExpress(req => ({ schema, context: { user: req.user } }))
+  graphqlExpress(req => ({ schema, context: { req } }))
 )
 
 app.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }))

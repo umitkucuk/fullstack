@@ -4,42 +4,38 @@ import User from '../../models/user'
 import config from '../../config/app.config'
 
 export default {
-  register: async (_, args, req) => {
+  register: async (_, args, { req }) => {
     const user = new User(args)
     await user.save()
 
-    return jwt.sign(
-      { id: user._id, email: user.email },
-      config.JWT_SECRET,
-      { expiresIn: '1y' }
-    )
+    req.session.userId = user._id
+
+    return true
   },
 
-  login: async (_, { email, password }, req) => {
-    const user = await User.findOne({ 'email': email })
+  login: async (_, args, { req }) => {
+    const user = await User.findOne({ 'email': args.email })
 
     if (!user) {
       throw new Error('Incorrect email or password')
     }
 
-    const valid = await user.comparePassword(password)
+    const valid = await user.validatePassword(args.password)
 
     if (!valid) {
       throw new Error('Incorrect email or password')
     }
 
-    return jwt.sign(
-      { id: user._id, email: user.email },
-      config.JWT_SECRET,
-      { expiresIn: '1d' }
-    )
+    req.session.userId = user._id
+
+    return true
   },
 
-  me: async (_, args, { user }) => {
-    if (!user) {
-      throw new Error('You are not authenticated!')
+  authHello: async (_, __, { req }) => {
+    if (req.session.userId) {
+      return `Cookie found! Your id is: ${req.session.userId}`
+    } else {
+      return 'Could not find cookie :('
     }
-
-    return await User.findById(user._id)
-  }
+  },
 }

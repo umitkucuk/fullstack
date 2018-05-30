@@ -4,7 +4,9 @@ import * as bcrypt from 'bcryptjs'
 export interface IUser extends mongoose.Document {
   email: string
   password: string
-  comparePassword(candidatePassword: string): Promise<boolean>
+  createdAt: Date
+  updateAt: Date
+  validatePassword(requestPassword): boolean
 }
 
 const UserSchema = new mongoose.Schema({
@@ -18,24 +20,27 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-
 }, { timestamps: true })
 
-UserSchema.pre('save', function (next) {
-  bcrypt.hash(this.password, 10, (err, hash) => {
-    this.password = hash
-    next()
-  })
-})
+function hashPassword(password: string): string {
+  if (!password) return null
 
-UserSchema.methods.comparePassword = function (candidatePassword: string): Promise<boolean> {
-  let password = this.password
-  return new Promise((resolve, reject) => {
-    bcrypt.compare(candidatePassword, password, (err, success) => {
-      if (err) return reject(err)
-      return resolve(success)
-    })
-  })
+  return bcrypt.hashSync(password, bcrypt.genSaltSync(10))
 }
+
+UserSchema.methods.validatePassword = function (requestPassword: string) {
+  return bcrypt.compareSync(requestPassword, this.password)
+}
+
+UserSchema.pre('save', function (next) {
+  const user: any = this
+
+  if (!user.isModified('password')) {
+    return next()
+  }
+
+  user.password = hashPassword(user.password)
+  return next()
+})
 
 export default mongoose.model<IUser>('User', UserSchema)
