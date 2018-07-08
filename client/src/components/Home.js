@@ -1,8 +1,8 @@
-import React, { Component, Fragment } from 'react'
+import React, { Component } from 'react'
+import gql from 'graphql-tag'
 import { Mutation } from 'react-apollo'
-import { gql } from 'apollo-boost'
 
-const loginMutation = gql`
+const LOGIN_MUTATION = gql`
   mutation login($email: String!, $password: String!) {
     login(email: $email, password: $password)
   }
@@ -27,9 +27,9 @@ class Home extends Component {
     const { email, password } = this.state
 
     return (
-      <Mutation mutation={loginMutation}>
-        {mutate => (
-          <Fragment>
+      <Mutation mutation={LOGIN_MUTATION}>
+        {(login, { data }) => (
+          <form onSubmit={() => login({ variables: { email, password } })}>
             <div>
               <input
                 placeholder='email'
@@ -47,11 +47,9 @@ class Home extends Component {
               />
             </div>
             <div>
-              <button onClick={() => mutate({ variables: { email, password } })}>
-                Submit
-              </button>
+              <button type='submit'>Submit</button>
             </div>
-          </Fragment>
+          </form>
         )}
       </Mutation>
     )
