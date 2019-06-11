@@ -1,24 +1,32 @@
 import React, { Component, Fragment } from 'react'
-import { Query } from 'react-apollo'
+import { Query, withApollo } from 'react-apollo'
 import gql from 'graphql-tag'
 
 const QUERY = gql`
-  query authHello {
-    authHello
+  query me {
+    me {
+      email
+    }
   }
 `
 
-class AuthHello extends Component {
+const HELLO = gql`
+  query hello {
+    hello
+  }
+`
+
+class Hello extends Component {
   render() {
     return (
-      <Query query={QUERY}>
+      <Query query={HELLO}>
         {({ data, error, loading }) => {
-          if (error) return 'Something is wrong :('
+          if (error) return 'Hatalı'
           if (loading) return 'Loading...'
 
           return (
             <Fragment>
-              <h1>{data.authHello}</h1>
+              <h1>{data.hello}</h1>
             </Fragment>
           )
         }}
@@ -27,4 +35,4 @@ class AuthHello extends Component {
   }
 }
 
-export default AuthHello
+export default withApollo(Hello)
