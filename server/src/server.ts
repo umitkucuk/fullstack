@@ -1,22 +1,21 @@
 import * as express from 'express'
-import * as bodyParser from 'body-parser'
+import { ApolloServer } from 'apollo-server-express'
 import * as cors from 'cors'
 import * as session from 'express-session'
 import * as mongoose from 'mongoose'
 (<any>mongoose).Promise = require('bluebird')
 import * as mongoSessionStore from 'connect-mongo'
-import * as passport from 'passport'
-import { graphqlExpress, graphiqlExpress } from 'apollo-server-express'
 import * as errorhandler from 'errorhandler'
 
 import config from './config/app.config'
-import schema from './graphql/schema'
+import typeDefs from './graphql/typedefs'
+import resolvers from './graphql/resolvers'
 
 const PORT = config.PORT || 8000
 
 const app = express()
 
-mongoose.connect(config.MONGO_URI)
+mongoose.connect(config.MONGO_URI, { useCreateIndex: true, useNewUrlParser: true })
   .then(() => console.log('Connection succesful to DB!'))
   .catch((err) => console.log(err))
 
@@ -26,7 +25,7 @@ if (config.NODE_ENV === 'development') {
 }
 
 // Cors Middleware
-app.use('*',
+app.use(
   cors({
     origin: 'http://localhost:3000',
     credentials: true
@@ -41,28 +40,35 @@ app.use(
     secret: config.NODE_ENV === 'production' ? config.SESSION_SECRET : 'secret',
     store: new MongoStore({ 
       mongooseConnection: mongoose.connection,
-      ttl: 14 * 24 * 60 * 60 // 14 days
+      ttl: 14 * 24 * 60 * 60
     }),
     resave: false,
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      //secure: true,
-      maxAge: 14 * 24 * 60 * 60 * 1000 // 14 days
+      secure: false,
+      maxAge: 14 * 24 * 60 * 60 * 1000
     }
   })
 )
 
-// Passport
-app.use(passport.initialize())
-app.use(passport.session())
+const server = new ApolloServer({
+  typeDefs,
+  resolvers,
+  context: ({ req, res }) => ({
+    req,
+    res
+  }),
+  playground: {
+    settings: {
+      'editor.theme': 'dark',
+      'request.credentials': 'include'
+    }
+  }
+})
 
-app.use(
-  '/graphql',
-  bodyParser.json(),
-  graphqlExpress(req => ({ schema, context: { req } }))
+server.applyMiddleware({ app })
+
+app.listen(PORT, () =>
+  console.log(`🚀  Server ready at http://localhost:${PORT}${server.graphqlPath}`)
 )
-
-app.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }))
-
-app.listen(PORT, () => console.log('Server is running on ' + PORT))

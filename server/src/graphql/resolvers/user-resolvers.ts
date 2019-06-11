@@ -1,7 +1,5 @@
-import * as jwt from 'jsonwebtoken'
-import * as bcrypt from 'bcryptjs'
 import User from '../../models/user'
-import config from '../../config/app.config'
+import * as Auth from '../../authentication'
 
 export default {
   register: async (_, args, { req }) => {
@@ -26,9 +24,15 @@ export default {
       throw new Error('Incorrect email or password')
     }
 
-    req.session.userId = user._id
+    req.session.userId = user.id
+  
+    return user
+  },
 
-    return true
+  logout: async (_, args, { req, res }) => {
+    Auth.checkSignedIn(req)
+
+    return Auth.signOut(req, res)
   },
 
   authHello: async (_, __, { req }) => {
@@ -38,4 +42,22 @@ export default {
       return 'Could not find cookie :('
     }
   },
+
+  me: async (_, __, { req }) => {
+    console.log(req.session)
+    if (req.session.userId) {
+      const user = await User.findOne({ '_id': req.session.userId })
+      return user
+    } else {
+      return Error('You are not login.')
+    }
+  },
+
+  hello: async (_, __, { req }) => {
+    return "Hello from Grahpql"
+  },
+
+  users: async (root, args, { req }, info) => {
+    Auth.checkSignedIn(req)
+  }
 }
