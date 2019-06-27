@@ -2,8 +2,6 @@ import React from 'react'
 import { Query } from 'react-apollo'
 import { gql } from 'apollo-boost'
 
-import Button from '../components/button'
-
 const HELLO_QUERY = gql`
   query hello {
     hello
@@ -19,7 +17,6 @@ const Dashboard: React.FC = () => {
         return (
           <>
             <h1>{hello}</h1>
-            <Button />
           </>
         )
       }}
