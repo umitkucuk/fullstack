@@ -32,15 +32,12 @@ UserSchema.methods.validatePassword = function (requestPassword: string) {
   return bcrypt.compareSync(requestPassword, this.password)
 }
 
-UserSchema.pre('save', function (next) {
+UserSchema.pre('save', async function () {
   const user: any = this
 
-  if (!user.isModified('password')) {
-    return next()
+  if (user.isModified('password')) {
+    user.password = await hashPassword(user.password)
   }
-
-  user.password = hashPassword(user.password)
-  return next()
 })
 
 export default mongoose.model<IUser>('User', UserSchema)

@@ -1,9 +1,14 @@
+import * as Joi from '@hapi/joi'
 import User from '../../models/user'
 import * as Auth from '../../authentication'
+import { Register } from '../../schemas'
 
 export default {
   register: async (_, args, { req }) => {
     const user = new User(args)
+
+    await Joi.validate(args, Register, { abortEarly: false })
+
     await user.save()
 
     req.session.userId = user._id
@@ -12,7 +17,7 @@ export default {
   },
 
   login: async (_, args, { req }) => {
-    const user = await User.findOne({ 'email': args.email })
+    const user = await User.findOne({ email: args.email })
 
     if (!user) {
       throw new Error('Incorrect email or password')
@@ -25,7 +30,7 @@ export default {
     }
 
     req.session.userId = user.id
-  
+
     return user
   },
 
@@ -46,7 +51,7 @@ export default {
   me: async (_, __, { req }) => {
     console.log(req.session)
     if (req.session.userId) {
-      const user = await User.findOne({ '_id': req.session.userId })
+      const user = await User.findOne({ _id: req.session.userId })
       return user
     } else {
       return Error('You are not login.')
@@ -54,10 +59,11 @@ export default {
   },
 
   hello: async (_, __, { req }) => {
-    return "Hello from Grahpql"
+    console.log(req.session)
+    return 'Hello from Grahpql'
   },
 
   users: async (root, args, { req }, info) => {
     Auth.checkSignedIn(req)
-  }
+  },
 }
