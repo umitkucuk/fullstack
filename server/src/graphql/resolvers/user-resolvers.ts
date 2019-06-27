@@ -1,69 +1,69 @@
-import * as Joi from '@hapi/joi'
-import User from '../../models/user'
-import * as Auth from '../../authentication'
-import { Register } from '../../schemas'
+import * as Joi from "@hapi/joi";
+import User from "../../models/user";
+import * as Auth from "../../authentication";
+import { Register } from "../../schemas";
 
 export default {
   register: async (_, args, { req }) => {
-    const user = new User(args)
+    const user = new User(args);
 
-    await Joi.validate(args, Register, { abortEarly: false })
+    await Joi.validate(args, Register, { abortEarly: false });
 
-    await user.save()
+    await user.save();
 
-    req.session.userId = user._id
+    req.session.userId = user._id;
 
-    return true
+    return true;
   },
 
   login: async (_, args, { req }) => {
-    const user = await User.findOne({ email: args.email })
+    const user = await User.findOne({ email: args.email });
 
     if (!user) {
-      throw new Error('Incorrect email or password')
+      throw new Error("Incorrect email or password");
     }
 
-    const valid = await user.validatePassword(args.password)
+    const valid = await user.validatePassword(args.password);
 
     if (!valid) {
-      throw new Error('Incorrect email or password')
+      throw new Error("Incorrect email or password");
     }
 
-    req.session.userId = user.id
+    req.session.userId = user.id;
 
-    return user
+    return user;
   },
 
   logout: async (_, args, { req, res }) => {
-    Auth.checkSignedIn(req)
+    Auth.checkSignedIn(req);
 
-    return Auth.signOut(req, res)
+    return Auth.signOut(req, res);
   },
 
   authHello: async (_, __, { req }) => {
     if (req.session.userId) {
-      return `Cookie found! Your id is: ${req.session.userId}`
+      return `Cookie found! Your id is: ${req.session.userId}`;
     } else {
-      return 'Could not find cookie :('
+      return "Could not find cookie :(";
     }
   },
 
   me: async (_, __, { req }) => {
-    console.log(req.session)
+    console.log(req.session);
     if (req.session.userId) {
-      const user = await User.findOne({ _id: req.session.userId })
-      return user
+      const user = await User.findOne({ _id: req.session.userId });
+      return user;
     } else {
-      return Error('You are not login.')
+      return Error("You are not login.");
     }
   },
 
   hello: async (_, __, { req }) => {
-    console.log(req.session)
-    return 'Hello from Grahpql'
+    console.log(req.session);
+    return "Hello from Grahpql";
   },
 
   users: async (root, args, { req }, info) => {
-    Auth.checkSignedIn(req)
-  },
-}
+    Auth.checkSignedIn(req);
+  }
+};
