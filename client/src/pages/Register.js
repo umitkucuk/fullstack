@@ -8,14 +8,14 @@ const REGISTER_MUTATION = gql`
   }
 `
 
-const Register: React.FC = () => {
-  let nameInput: any, descriptionInput: any
+const Register = () => {
+  let nameInput, descriptionInput
 
   return (
     <>
       <h1>Create Enterprise</h1>
       <Mutation mutation={REGISTER_MUTATION}>
-        {(createEnterprise: any, { data }: { [key: string]: any }) => (
+        {(createEnterprise, { data }) => (
           <div>
             <form
               onSubmit={e => {
