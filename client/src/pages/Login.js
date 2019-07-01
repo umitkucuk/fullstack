@@ -1,58 +1,62 @@
 import React from 'react'
+import { withRouter } from 'react-router-dom'
 import * as Yup from 'yup'
 import { useMutation } from 'react-apollo-hooks'
-import { Formik, Form, Field } from 'formik'
-import { gql } from 'apollo-boost'
+import { Formik, Form, Field, ErrorMessage } from 'formik'
+import { get } from 'lodash'
 
-const LOGIN_MUTATION = gql`
-  mutation Login($email: String!, $password: String!) {
-    login(email: $email, password: $password) {
-      id
-      email
-    }
-  }
-`
+import { LOGIN_MUTATION } from '../graphql/queries/auth'
 
-const handleSubsribe = async ({ values, loginMutation, resetForm }) => {
-  const loginResult = await loginMutation({
-    variables: { input: values },
-  })
+import Page from '../components/Page'
 
-  if (loginResult) {
-    resetForm()
-  }
-}
-
-const Login = () => {
+const Login = ({ history }) => {
   const loginMutation = useMutation(LOGIN_MUTATION)
 
+  const handleSubmit = async ({ values, loginMutation }) => {
+    const submitResult = await loginMutation({
+      variables: {
+        email: values.email,
+        password: values.password,
+      },
+    })
+
+    if (get(submitResult, 'data.login.id')) {
+      history.push('/')
+    }
+  }
+
   return (
-    <Formik
-      initialValues={{
-        email: '',
-        password: '',
-      }}
-      onSubmit={(values, { setSubmitting }) => {
-        setTimeout(() => {
-          alert(JSON.stringify(values, null, 2))
-          setSubmitting(false)
-        }, 400)
-      }}
-      validationSchema={Yup.object().shape({
-        email: Yup.string()
-          .email()
-          .required('Before submitting you need to provide your email'),
-        password: Yup.string().required('Password is required'),
-      })}
-      render={isSubmitting => (
-        <Form>
-          <Field type="email" name="email" />
-          <Field type="password" name="password" />
-          <button type="submit">Submit</button>
-        </Form>
-      )}
-    />
+    <Page>
+      <Formik
+        initialValues={{
+          email: '',
+          password: '',
+        }}
+        onSubmit={async values =>
+          handleSubmit({
+            values,
+            loginMutation,
+          })
+        }
+        validationSchema={Yup.object().shape({
+          email: Yup.string()
+            .email()
+            .required('Before submitting you need to provide your email'),
+          password: Yup.string().required('Password is required'),
+        })}
+        render={() => (
+          <Form>
+            <label htmlFor="email">Email</label>
+            <Field type="email" name="email" />
+            <label htmlFor="password">Password</label>
+            <Field type="password" name="password" />
+            <button type="submit">Submit</button>
+            <ErrorMessage name="password" component="div" />
+          </Form>
+        )}
+      />
+    </Page>
   )
 }
 
-export default Login
+export default withRouter(Login)
