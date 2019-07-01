@@ -6,6 +6,7 @@ import { BrowserRouter as Router, Route } from 'react-router-dom'
 
 import GlobalStyle from './GlobalStyle'
 
+import AuthRoute from './components/AuthRoute'
 import Navigation from './components/Navigation'
 import Dashboard from './pages/Dashboard'
 import Login from './pages/Login'
