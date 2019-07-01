@@ -10,5 +10,10 @@ export default createGlobalStyle`
 
   body {
     font-size: 1.6rem;
+    font-family: 'Roboto', sans-serif;
+  }
+
+  a {
+    text-decoration: none;
   }
 `

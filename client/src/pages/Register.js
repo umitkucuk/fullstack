@@ -13,7 +13,6 @@ const Register = () => {
 
   return (
     <>
-      <h1>Create Enterprise</h1>
       <Mutation mutation={REGISTER_MUTATION}>
         {(createEnterprise, { data }) => (
           <div>
