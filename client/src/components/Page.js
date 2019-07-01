@@ -1,12 +1,19 @@
 import React, { memo } from 'react'
 import styled from 'styled-components/macro'
 
-const Main = styled.main`
+import Header from './Header'
+
+const PageContainer = styled.div`
   padding-left: 250px;
 `
 
 function Page({ children }) {
-  return <Main>{children}</Main>
+  return (
+    <PageContainer>
+      <Header />
+      <main>{children}</main>
+    </PageContainer>
+  )
 }
 
 export default memo(Page)
