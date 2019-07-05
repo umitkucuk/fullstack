@@ -6,5 +6,5 @@ export default {
     await enterprise.save()
 
     return true
-  }
+  },
 }

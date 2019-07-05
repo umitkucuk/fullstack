@@ -6,21 +6,24 @@ export interface IUser extends mongoose.Document {
   password: string
   createdAt: Date
   updateAt: Date
-  validatePassword(requestPassword): boolean
+  validatePassword(requestPassword: string): boolean
 }
 
-const UserSchema = new mongoose.Schema({
-  email: { 
-    type: String,
-    required: true,
-    unique: true,
-    lowercase: true,
+const UserSchema = new mongoose.Schema(
+  {
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+    },
+    password: {
+      type: String,
+      required: true,
+    },
   },
-  password: { 
-    type: String,
-    required: true
-  },
-}, { timestamps: true })
+  { timestamps: true },
+)
 
 function hashPassword(password: string): string {
   if (!password) return null
@@ -28,11 +31,11 @@ function hashPassword(password: string): string {
   return bcrypt.hashSync(password, bcrypt.genSaltSync(10))
 }
 
-UserSchema.methods.validatePassword = function (requestPassword: string) {
+UserSchema.methods.validatePassword = function(requestPassword: string) {
   return bcrypt.compareSync(requestPassword, this.password)
 }
 
-UserSchema.pre('save', async function () {
+UserSchema.pre('save', async function() {
   const user: any = this
 
   if (user.isModified('password')) {
