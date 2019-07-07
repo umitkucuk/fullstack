@@ -1,5 +1,5 @@
 import React from 'react'
-import { useQuery } from 'react-apollo-hooks'
+import { useQuery } from '@apollo/react-hooks'
 import { gql } from 'apollo-boost'
 import Page from '../components/Page'
 

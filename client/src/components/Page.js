@@ -10,7 +10,7 @@ const PageContainer = styled.div`
 function Page({ children }) {
   return (
     <PageContainer>
-      <Header />
+      {/* <Header /> */}
       <main>{children}</main>
     </PageContainer>
   )

@@ -1,14 +1,14 @@
 import React from 'react'
 import ApolloClient, { InMemoryCache } from 'apollo-boost'
-import { ApolloProvider } from 'react-apollo'
-import { ApolloProvider as ApolloHooksProvider } from 'react-apollo-hooks'
-import { BrowserRouter as Router, Route } from 'react-router-dom'
+import { ApolloProvider } from '@apollo/react-hooks'
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 
 import GlobalStyle from './GlobalStyle'
 
 import AuthRoute from './components/AuthRoute'
 import Navigation from './components/Navigation'
 import Dashboard from './pages/Dashboard'
+import People from './pages/People'
 import Login from './pages/Login'
 import Register from './pages/Register'
 
@@ -21,18 +21,19 @@ const client = new ApolloClient({
 const App = () => {
   return (
     <ApolloProvider client={client}>
-      <ApolloHooksProvider client={client}>
-        <Router>
-          <>
-            <GlobalStyle />
-            <Navigation />
+      <Router>
+        <>
+          <GlobalStyle />
+          <Navigation />
 
+          <Switch>
             <Route exact path="/" component={Dashboard} />
+            <Route exact path="/people/:id" component={People} />
             <Route exact path="/login" component={Login} />
             <Route exact path="/register" component={Register} />
-          </>
-        </Router>
-      </ApolloHooksProvider>
+          </Switch>
+        </>
+      </Router>
     </ApolloProvider>
   )
 }
