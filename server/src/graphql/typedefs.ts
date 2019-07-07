@@ -17,6 +17,7 @@ const typeDefs = gql`
     me: User
     authHello: String
     hello: String
+    user(id: String!): User
     users: [User!]!
   }
 

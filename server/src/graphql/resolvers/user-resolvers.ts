@@ -61,6 +61,16 @@ export default {
     return 'Hello from Grahpql'
   },
 
+  getUserById: async (root, { id }, { req }) => {
+    let user = await User.findById(id)
+
+    if (!user) {
+      return Error('User not found.')
+    }
+
+    return user
+  },
+
   users: async (root, args, { req }, info) => {
     let users = await User.find({})
 

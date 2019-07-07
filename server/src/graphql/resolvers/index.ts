@@ -6,13 +6,14 @@ export default {
     authHello: UserResolvers.authHello,
     me: UserResolvers.me,
     hello: UserResolvers.hello,
-    users: UserResolvers.users
+    user: UserResolvers.getUserById,
+    users: UserResolvers.users,
   },
 
   Mutation: {
     register: UserResolvers.register,
     login: UserResolvers.login,
     logout: UserResolvers.logout,
-    createEnterprise: EnterpriseResolvers.create
-  }
+    createEnterprise: EnterpriseResolvers.create,
+  },
 }
