@@ -1,22 +1,23 @@
 import * as express from 'express'
-import { ApolloServer } from 'apollo-server-express'
+import apolloServer from './apollo-server'
 import * as helmet from 'helmet'
-import * as cors from 'cors'
 import * as session from 'express-session'
 import * as mongoose from 'mongoose'
 ;(<any>mongoose).Promise = require('bluebird')
 import * as mongoSessionStore from 'connect-mongo'
 import * as errorhandler from 'errorhandler'
+import * as morgan from 'morgan'
+
+import { corsOptions } from './middlewares/cors'
 
 import config from './config/app.config'
-import typeDefs from './graphql/typedefs'
-import resolvers from './graphql/resolvers'
 
 const PORT = config.PORT || 8000
 
 const app = express()
 
 app.use(helmet())
+app.use(morgan('dev'))
 
 mongoose
   .connect(config.MONGO_URI, { useCreateIndex: true, useNewUrlParser: true })
@@ -26,12 +27,6 @@ mongoose
 // Error Handler
 if (config.NODE_ENV === 'development') {
   app.use(errorhandler())
-}
-
-// Cors Middleware Options
-const corsOptions = {
-  origin: 'http://localhost:3000',
-  credentials: true,
 }
 
 const MongoStore = mongoSessionStore(session)
@@ -54,21 +49,6 @@ app.use(
   }),
 )
 
-const server = new ApolloServer({
-  typeDefs,
-  resolvers,
-  context: ({ req, res }) => ({
-    req,
-    res,
-  }),
-  playground: {
-    settings: {
-      'editor.theme': 'dark',
-      'request.credentials': 'include',
-    },
-  },
-})
+apolloServer.applyMiddleware({ app, path: '/api', cors: corsOptions })
 
-server.applyMiddleware({ app, cors: corsOptions })
-
-app.listen(PORT, () => console.log(`🚀  Server ready at http://localhost:${PORT}${server.graphqlPath}`))
+app.listen(PORT, () => console.log(`🚀  Server ready at http://localhost:${PORT}/api`))
