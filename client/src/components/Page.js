@@ -7,11 +7,15 @@ const PageContainer = styled.div`
   padding-left: 250px;
 `
 
-function Page({ children }) {
+const Main = styled.div`
+  padding: 10rem;
+`
+
+const Page = ({ children }) => {
   return (
     <PageContainer>
       {/* <Header /> */}
-      <main>{children}</main>
+      <Main>{children}</Main>
     </PageContainer>
   )
 }
