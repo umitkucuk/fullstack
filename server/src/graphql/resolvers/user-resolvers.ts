@@ -2,6 +2,7 @@ import * as Joi from '@hapi/joi'
 import User from '../../models/user'
 import * as Auth from '../../authentication'
 import { Register } from '../../schemas'
+import { authedResolver } from '../../utils/authentication'
 
 export default {
   register: async (_, args, { req }) => {
@@ -30,6 +31,7 @@ export default {
     }
 
     req.session.userId = user.id
+    req.session.user = user
 
     return user
   },
@@ -57,9 +59,11 @@ export default {
     }
   },
 
-  hello: async (_, __, { req }) => {
-    return 'Hello from Grahpql'
-  },
+  hello: authedResolver(async (_, __, context) => {
+    const { user, req } = context
+
+    return `Hello from Grahpql and your user email is: ${user.email}`
+  }),
 
   getUserById: async (root, { id }, { req }) => {
     let user = await User.findById(id)
@@ -71,9 +75,7 @@ export default {
     return user
   },
 
-  users: async (root, args, { req }, info) => {
-    let users = await User.find({})
-
-    return users
+  users: async (root, args, { models }) => {
+    return await models.User.find()
   },
 }
