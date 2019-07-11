@@ -2,24 +2,24 @@ import React from 'react'
 import { withRouter } from 'react-router-dom'
 import * as Yup from 'yup'
 import { useMutation } from 'react-apollo-hooks'
-import { Formik, Form, Field, ErrorMessage } from 'formik'
+import { Formik, ErrorMessage } from 'formik'
 import { get } from 'lodash'
 
-import { LOGIN_MUTATION } from '../graphql/queries/auth'
-
 import Page from '../components/Page'
+import { Form, Label, Input } from '../components/form'
+
+import { LOGIN_MUTATION } from '../graphql/queries/auth'
 
 const Login = ({ history }) => {
   const loginMutation = useMutation(LOGIN_MUTATION)
 
-  const handleSubmit = async ({ values, loginMutation }) => {
+  const handleSubmitForm = async ({ values, loginMutation }) => {
     const submitResult = await loginMutation({
       variables: {
         email: values.email,
         password: values.password,
       },
     })
-
     if (get(submitResult, 'data.login.id')) {
       history.push('/')
     }
@@ -33,7 +33,7 @@ const Login = ({ history }) => {
           password: '',
         }}
         onSubmit={async values =>
-          handleSubmit({
+          handleSubmitForm({
             values,
             loginMutation,
           })
@@ -44,12 +44,17 @@ const Login = ({ history }) => {
             .required('Before submitting you need to provide your email'),
           password: Yup.string().required('Password is required'),
         })}
-        render={() => (
-          <Form>
-            <label htmlFor="email">Email</label>
-            <Field type="email" name="email" />
-            <label htmlFor="password">Password</label>
-            <Field type="password" name="password" />
+        render={({ values, handleChange, handleSubmit }) => (
+          <Form onSubmit={handleSubmit}>
+            <Label htmlFor="email">Email</Label>
+            <Input type="email" name="email" value={values.email} onChange={handleChange} />
+            <Label htmlFor="password">Password</Label>
+            <Input
+              type="password"
+              name="password"
+              value={values.password}
+              onChange={handleChange}
+            />
             <button type="submit">Submit</button>
             <ErrorMessage name="password" component="div" />
           </Form>
