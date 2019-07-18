@@ -9,6 +9,7 @@ import AuthRoute from './components/AuthRoute'
 import Navigation from './components/Navigation'
 import Dashboard from './pages/Dashboard'
 import People from './pages/People'
+import Account from './pages/Account'
 import Login from './pages/Login'
 import Register from './pages/Register'
 
@@ -29,6 +30,7 @@ const App = () => {
           <Switch>
             <Route exact path="/" component={Dashboard} />
             <Route exact path="/people/:id" component={People} />
+            <Route exact path="/account" component={Account} />
             <Route exact path="/login" component={Login} />
             <Route exact path="/register" component={Register} />
           </Switch>

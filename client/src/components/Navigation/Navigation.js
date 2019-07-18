@@ -12,6 +12,12 @@ export default () => {
         </NavLink>
       </S.NavigationLink>
       <S.NavigationLink>
+        <NavLink activeClassName="active" exact to="/account">
+          <S.NavigationLinkIcon />
+          Account
+        </NavLink>
+      </S.NavigationLink>
+      <S.NavigationLink>
         <NavLink activeClassName="active" exact to="/login">
           <S.NavigationLinkIcon />
           Login
