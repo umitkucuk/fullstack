@@ -8,6 +8,7 @@ export default {
     hello: UserResolvers.hello,
     user: UserResolvers.getUserById,
     users: UserResolvers.users,
+    getEnterprise: EnterpriseResolvers.getEnterprise,
   },
 
   Mutation: {
@@ -15,5 +16,7 @@ export default {
     login: UserResolvers.login,
     logout: UserResolvers.logout,
     createEnterprise: EnterpriseResolvers.create,
+    addCustomer: EnterpriseResolvers.addCostumer,
+    updateEnterprise: EnterpriseResolvers.update,
   },
 }

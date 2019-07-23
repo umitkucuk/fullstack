@@ -10,7 +10,7 @@ const typeDefs = gql`
     id: String!
     name: String!
     description: String
-    costumers: [User]
+    costumers: [String]
   }
 
   type Query {
@@ -19,13 +19,16 @@ const typeDefs = gql`
     hello: String
     user(id: String!): User
     users: [User!]!
+    getEnterprise(id: String!): Enterprise
   }
 
   type Mutation {
     register(email: String!, password: String!): User
     login(email: String!, password: String!): User
     logout: Boolean
-    createEnterprise(name: String!, description: String): Boolean
+    createEnterprise(name: String!, password: String!, description: String): Enterprise
+    addCustomer(name: String!, customerId: String!): Enterprise
+    updateEnterprise(id: String!, description: String): Enterprise
   }
 `
 

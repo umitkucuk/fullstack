@@ -21,6 +21,10 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    referralNumber: {
+      type: String,
+      default: null,
+    },
   },
   { timestamps: true },
 )
@@ -34,6 +38,12 @@ function hashPassword(password: string): string {
 UserSchema.methods.validatePassword = function(requestPassword: string) {
   return bcrypt.compareSync(requestPassword, this.password)
 }
+
+// UserSchema.methods.findMe = async function(userId: string) {
+//   let user = await  mongoose.connection.db.collection(name, function (err, collection) {
+//     collection.find(query).toArray(cb)
+//   })
+// }
 
 UserSchema.pre('save', async function() {
   const user: any = this
