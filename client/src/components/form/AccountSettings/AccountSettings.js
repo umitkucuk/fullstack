@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useQuery, useMutation } from 'react-apollo-hooks'
 import { Formik } from 'formik'
 import { Form, Label, Input } from 'components/form'
@@ -29,37 +29,45 @@ const AccountSettingsForm = () => {
     }
   }
 
+  if (getEnterprise.loading) {
+    return <div>Loading...</div>
+  }
+
   return (
-    <Formik
-      initialValues={{
-        email: '',
-        password: '',
-      }}
-      onSubmit={async values =>
-        handleSubmitForm({
-          values,
-          mutation,
-        })
-      }
-      render={({ values, handleChange, handleSubmit }) => (
-        <Form onSubmit={handleSubmit}>
-          <Label htmlFor="id">ID</Label>
-          <Input type="text" name="id" value={values.id} onChange={handleChange} />
-          <Label htmlFor="name">Name</Label>
-          <Input type="text" name="name" value={values.name} onChange={handleChange} />
-          <Label htmlFor="description">Description</Label>
-          <Input
-            type="text"
-            name="description"
-            value={values.description}
-            onChange={handleChange}
-          />
-          <button type="submit" disabled={loading}>
-            Update
-          </button>
-        </Form>
-      )}
-    />
+    <>
+      <Formik
+        initialValues={{
+          id: '',
+          email: '',
+          password: '',
+        }}
+        onSubmit={async values =>
+          handleSubmitForm({
+            values,
+            mutation,
+          })
+        }
+        render={({ values, handleChange, handleSubmit }) => (
+          <Form onSubmit={handleSubmit}>
+            <Label htmlFor="id">ID</Label>
+            <Input type="text" name="id" value={values.id} onChange={handleChange} />
+            <Label htmlFor="name">Name</Label>
+            <Input type="text" name="name" value={values.name} onChange={handleChange} />
+            <Label htmlFor="description">Description</Label>
+            <Input
+              type="text"
+              name="description"
+              value={values.description}
+              onChange={handleChange}
+            />
+            <button type="submit" disabled={loading}>
+              Update
+            </button>
+          </Form>
+        )}
+      />
+      {getEnterprise && getEnterprise.data.getEnterprise.id}
+    </>
   )
 }
 
