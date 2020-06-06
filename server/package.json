@@ -16,7 +16,7 @@
     "@types/hapi__joi": "^15.0.2",
     "@types/helmet": "^0.0.43",
     "@types/morgan": "^1.7.35",
-    "apollo-server-express": "^2.4.8",
+    "apollo-server-express": "^2.14.2",
     "bcryptjs": "^2.4.3",
     "bluebird": "^3.5.4",
     "connect-mongo": "^2.0.1",
